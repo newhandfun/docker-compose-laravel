@@ -8,10 +8,12 @@ services:
     build:
       context: .
       dockerfile: nginx.dockerfile
-    container_name: hamulate_nginx
+    container_name: ${COMPOSER_APP_NAME}_nginx
     ports:
       - "8088:80"
     volumes:
+      # 如果多幾層路徑的話就會碰到這個問題，疑似是權限問題
+      # https://segmentfault.com/a/1190000017789890
       - ./src:/var/www/html:delegated
     depends_on:
       - php
@@ -21,7 +23,7 @@ services:
 
   postgres:
     image: postgres:13
-    container_name: hamulate_postgres
+    container_name: ${COMPOSER_APP_NAME}_postgres
     # restart: unless-stopped
     tty: true
     ports:
@@ -39,7 +41,7 @@ services:
     build:
       context: .
       dockerfile: php.dockerfile
-    container_name: hamulate_php
+    container_name: ${COMPOSER_APP_NAME}_php
     volumes:
       - ./src:/var/www/html:delegated
     ports:
@@ -64,7 +66,7 @@ services:
 
   npm:
     image: node:13.7
-    container_name: hamulate_npm
+    container_name: ${COMPOSER_APP_NAME}_npm
     volumes:
       - ./src:/var/www/html
     working_dir: /var/www/html
@@ -74,7 +76,7 @@ services:
     build:
       context: .
       dockerfile: php.dockerfile
-    container_name: hamulate_artisan
+    container_name: ${COMPOSER_APP_NAME}_artisan
     volumes:
       - ./src:/var/www/html:delegated
     depends_on:
